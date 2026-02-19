@@ -10,6 +10,7 @@ destination = (255, 0, 0)
 
 start_cell = None
 goal_cell = None
+painting = False
 obstacle_cells = set()
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -33,6 +34,10 @@ def fill_cell(surface, x, y, color):
     rect = pygame.rect(y, x , cell_dimension, cell_dimension)
     pygame.draw.rect(surface, color, rect)
 
+def add_obstacle(cell):
+    if cell != start_cell and cell != goal_cell:
+        obstacle_cells.add(cell)
+
 program_run = True
 
 while program_run:
@@ -44,6 +49,8 @@ while program_run:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             row, col = clicked_cell(event.pos)
             cell = (row, col)
+            #print(event)
+
             if event.button == 2:
                 if (row, col) in obstacle_cells:
                     obstacle_cells.remove((row, col))
@@ -59,7 +66,6 @@ while program_run:
                 if cell != start_cell not in obstacle_cells:
                     goal_cell = cell
                     print(f"The goal cell is {cell}")
-
 
     draw_grid(window)
     pygame.display.flip()
