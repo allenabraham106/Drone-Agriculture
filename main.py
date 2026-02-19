@@ -1,4 +1,5 @@
-import pygame 
+import pygame
+
 pygame.init()
 
 WINDOW_HEIGHT = int(input("What would you like the height to be: "))
@@ -16,11 +17,13 @@ obstacle_cells = set()
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Our window")
 
+
 def draw_grid(surface):
     for x in range(0, WINDOW_WIDTH, cell_dimension):
-        pygame.draw.line(surface, white_colour, (x, 0), (x,WINDOW_HEIGHT))
+        pygame.draw.line(surface, white_colour, (x, 0), (x, WINDOW_HEIGHT))
     for y in range(0, WINDOW_HEIGHT, cell_dimension):
         pygame.draw.line(surface, white_colour, (0, y), (WINDOW_WIDTH, y))
+
 
 def clicked_cell(cell_posn):
     cell_x, cell_y = cell_posn
@@ -28,20 +31,23 @@ def clicked_cell(cell_posn):
     row = cell_y // cell_dimension
     return row, col
 
+
 def fill_cell(surface, x, y, color):
     x = col * cell_dimension
     y = row * cell_dimension
-    rect = pygame.rect(y, x , cell_dimension, cell_dimension)
+    rect = pygame.rect(y, x, cell_dimension, cell_dimension)
     pygame.draw.rect(surface, color, rect)
+
 
 def add_obstacle(cell):
     if cell != start_cell and cell != goal_cell:
         obstacle_cells.add(cell)
 
+
 program_run = True
 
 while program_run:
-    window.fill((0,0,0))
+    window.fill((0, 0, 0))
     pygame.time.delay(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -49,14 +55,14 @@ while program_run:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             row, col = clicked_cell(event.pos)
             cell = (row, col)
-            #print(event)
+            # print(event)
 
             if event.button == 2:
                 if (row, col) in obstacle_cells:
                     obstacle_cells.remove((row, col))
-                else: 
+                else:
                     if cell != start_cell and cell != goal_cell:
-                        obstacle_cells.add((row,col))
+                        obstacle_cells.add((row, col))
                         print(f"Obstacle at {cell}")
             elif event.button == 1:
                 if cell not in obstacle_cells:
