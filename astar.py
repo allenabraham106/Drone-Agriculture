@@ -1,3 +1,4 @@
+import heapq
 # 1 = Wall
 # 0 = Open space
 grid = [
@@ -46,10 +47,21 @@ def heuristic(current, goal):
     # how far apart are the rows and how far apart is our location on the rows
     return abs(current[0] - goal[0]) + abs(current[1] - goal[1])
 
+
+#its been a minute since wokring. 
+# Adding temporary comments to understand
 def astar(grid, goal, start):
     come_from = {
-
+        #how did we get everywhere 
     }
+    open_list = [
+        #we know it exists just haven't explored
+    ]
+    g_score = {
+        #travel cost for a position
+        start : 0
+    }
+    heapq.heappush(open_list, (0, start))
 
 
 print(get_neighbors(start, grid))
