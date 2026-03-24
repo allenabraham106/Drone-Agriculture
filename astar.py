@@ -46,6 +46,11 @@ def heuristic(current, goal):
     # how far apart are the rows and how far apart is our location on the rows
     return abs(current[0] - goal[0]) + abs(current[1] - goal[1])
 
+def astar(grid, goal, start):
+    come_from = {
+
+    }
+
 
 print(get_neighbors(start, grid))
 print(heuristic(start, goal))
