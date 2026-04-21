@@ -21,7 +21,7 @@ print(f"Start: {start}")
 print(f"Goal: {goal}")
 
 
-# movement handeler
+# where can I move
 def get_neighbors(pos, grid):
     row, col = pos
     move = [
@@ -61,10 +61,14 @@ def astar(grid, goal, start):
         #travel cost for a position
         start : 0
     }
-    heapq.heappush(open_list, (0, start)) 
+    heapq.heappush(open_list, (0, start))  #zero cause you haven't gone anywhere yet
 
+    # so it basically find the lowest f score fromt he list of places we know exists, 
+    # if they are the goal then there we go, but if it is the goal but nto the start, 
+    # we go through all of come-from and append it to our path. 
+    # If we still haven't found our goal, we search neighbors and calculte the f_score and iterate using that
     while open_list: 
-        f_score, current = heapq.heappop(open_list)
+        f_score, current = heapq.heappop(open_list) #takes the lowest f_score and makes it the current
         if current == goal:
             path = []
             while current != start: 
@@ -74,13 +78,13 @@ def astar(grid, goal, start):
         if current != goal:
             neighbors = get_neighbors(current, grid)
             for neighbor in neighbors:
-                new_g = g_score[current] + 1
-                h_score = heuristic(neighbor, goal)
-                f = new_g + h_score
-                if neighbor not in g_score or new_g < g_score[neighbor]:
+                new_g = g_score[current] + 1 #how far did we already go
+                h_score = heuristic(neighbor, goal) #how far do we have to go
+                f_score = new_g + h_score # cost of actually going there
+                if neighbor not in g_score or new_g < g_score[neighbor]: #did we see this before or if we have is it worth exploring for cost
                     g_score[neighbor] = new_g
                     come_from[neighbor] = current
-                    heapq.heappush(open_list, (f, neighbor))
+                    heapq.heappush(open_list, (f_score, neighbor))
     return None
 
 if __name__ == "__main__":
