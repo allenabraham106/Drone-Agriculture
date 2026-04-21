@@ -61,7 +61,27 @@ def astar(grid, goal, start):
         #travel cost for a position
         start : 0
     }
-    heapq.heappush(open_list, (0, start))
+    heapq.heappush(open_list, (0, start)) 
+
+    while open_list: 
+        f_score, current = heapq.heappop(open_list)
+        if current == goal:
+            path = []
+            while current != start: 
+                path.append(current)
+                current = come_from[current]
+            return path
+        if current != goal:
+            neighbors = get_neighbors(current, grid)
+            for neighbor in neighbors:
+                new_g = g_score[current] + 1
+                h_score = heuristic(neighbor, goal)
+                f = new_g + h_score
+                come_from[neighbor] = current
+                open_list
+                
+
+
 
 
 print(get_neighbors(start, grid))
