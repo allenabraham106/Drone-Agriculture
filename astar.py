@@ -77,9 +77,15 @@ def astar(grid, goal, start):
                 new_g = g_score[current] + 1
                 h_score = heuristic(neighbor, goal)
                 f = new_g + h_score
-                come_from[neighbor] = current
-                open_list
-                
+                if neighbor not in g_score or new_g < g_score[neighbor]:
+                    g_score[neighbor] = new_g
+                    come_from[neighbor] = current
+                    heapq.heappush(open_list, (f, neighbor))
+    return None
+
+if __name__ == "__main__":
+    path = astar(grid, goal, start)
+    print(path)
 
 
 
