@@ -15,6 +15,7 @@ start_cell = None
 goal_cell = None
 painting = False
 obstacle_cells = set()
+current_path = []
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Our window")
@@ -61,7 +62,10 @@ while program_run:
     for cell in obstacle_cells:
         row,col = cell
         fill_cell(window, row, col, obstacle_color)
-    current_path = []
+    if current_path:
+        for cell in current_path:
+            row, col = cell
+            fill_cell(window, row, col, pathway)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             program_run = False
@@ -90,12 +94,8 @@ while program_run:
                 grid = [[0 for _ in range(col)] for _ in range(rows)] #building the grid
                 for obstacles in obstacle_cells:
                     grid[obstacles[0]][obstacles[1]] = 1
-                path = astar(grid, goal_cell, start_cell)
-                if path: 
-                    for points in path: 
-                        row, col = points
-                        fill_cell(window, row, col, pathway)
-                print(path)
+                current_path = astar(grid, goal_cell, start_cell)
+                print(current_path)
     draw_grid(window)
     pygame.display.flip()
 
