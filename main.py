@@ -10,6 +10,7 @@ white_colour = (200, 200, 200)
 start_colour = (0, 255, 0)
 destination = (255, 0, 0)
 obstacle_color = (128, 128, 128)
+pathway = (0,0 ,255)
 start_cell = None
 goal_cell = None
 painting = False
@@ -60,7 +61,7 @@ while program_run:
     for cell in obstacle_cells:
         row,col = cell
         fill_cell(window, row, col, obstacle_color)
-    
+    current_path = []
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             program_run = False
@@ -83,8 +84,18 @@ while program_run:
             if event.key == pygame.K_g:
                 if goal_cell == None:
                     goal_cell = clicked_cell(pygame.mouse.get_pos())
-    
-
+            elif event.key == pygame.K_SPACE:
+                rows = WINDOW_HEIGHT // cell_dimension
+                col = WINDOW_WIDTH // cell_dimension
+                grid = [[0 for _ in range(col)] for _ in range(rows)] #building the grid
+                for obstacles in obstacle_cells:
+                    grid[obstacles[0]][obstacles[1]] = 1
+                path = astar(grid, goal_cell, start_cell)
+                if path: 
+                    for points in path: 
+                        row, col = points
+                        fill_cell(window, row, col, pathway)
+                print(path)
     draw_grid(window)
     pygame.display.flip()
 
