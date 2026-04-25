@@ -1,4 +1,5 @@
 from astar import astar
+from farm import generate_farm
 import pygame
 
 pygame.init()
