@@ -79,6 +79,7 @@ def astar(grid, goal, start, yeild_zones):
             while current != start: 
                 path.append(current)
                 current = come_from[current]
+            path.reverse()
             return path
         if current != goal:
             neighbors = get_neighbors(current, grid)

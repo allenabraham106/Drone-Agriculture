@@ -1,11 +1,13 @@
 from astar import astar
 from farm import generate_farm, yield_colours
+from drone import Drone
 import pygame
 
 pygame.init()
 
 WINDOW_HEIGHT = 800
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 1000
+GRID_WIDTH = 800
 cell_dimension = 20
 white_colour = (200, 200, 200)
 start_colour = (0, 255, 0)
@@ -17,16 +19,18 @@ goal_cell = None
 painting = False
 obstacle_cells = set()
 current_path = []
-
+drone_image = pygame.image.load("Drone.png")
+drone_image = pygame.transform.scale(drone_image, (cell_dimension, cell_dimension))
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Our window")
 rows = WINDOW_HEIGHT // cell_dimension
 cols = WINDOW_WIDTH // cell_dimension
 yeild_zones = generate_farm(rows, cols)
+drone = None
 
 
 def draw_grid(surface):
-    for x in range(0, WINDOW_WIDTH, cell_dimension):
+    for x in range(0, GRID_WIDTH, cell_dimension):
         pygame.draw.line(surface, white_colour, (x, 0), (x, WINDOW_HEIGHT))
     for y in range(0, WINDOW_HEIGHT, cell_dimension):
         pygame.draw.line(surface, white_colour, (0, y), (WINDOW_WIDTH, y))
@@ -50,6 +54,8 @@ def add_obstacle(cell):
     if cell != start_cell and cell != goal_cell:
         obstacle_cells.add(cell)
 
+def draw_panel(surface):
+    
 
 program_run = True
 
@@ -72,10 +78,14 @@ while program_run:
         row,col = cell
         fill_cell(window, row, col, obstacle_color)
 
-    if current_path:
-        for cell in current_path:
+    if current_path and drone:
+        for cell in current_path[:drone.index]:
             row, col = cell
             fill_cell(window, row, col, pathway)
+    
+    if drone:
+        drone.update()
+        drone.draw(window, cell_dimension)
     
     
     for event in pygame.event.get():
@@ -108,6 +118,8 @@ while program_run:
                     for obstacles in obstacle_cells:
                         grid[obstacles[0]][obstacles[1]] = 1
                     current_path = astar(grid, goal_cell, start_cell, yeild_zones)
+                    drone = Drone(current_path, cell_dimension)
+                    drone.start()
                     print(current_path)
             elif event.key == pygame.K_r:
                 yeild_zones = generate_farm(rows, cols)
