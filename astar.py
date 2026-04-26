@@ -50,7 +50,7 @@ def heuristic(current, goal):
 
 #its been a minute since wokring. 
 # Adding temporary comments to understand
-def astar(grid, goal, start):
+def astar(grid, goal, start, yeild_zones):
     come_from = {
         #how did we get everywhere 
     }
@@ -62,6 +62,11 @@ def astar(grid, goal, start):
         start : 0
     }
     heapq.heappush(open_list, (0, start))  #zero cause you haven't gone anywhere yet
+    cost = {
+        "high": 0.5,
+        "medium": 1,
+        "low":2
+    }
 
     # so it basically find the lowest f score fromt he list of places we know exists, 
     # if they are the goal then there we go, but if it is the goal but nto the start, 
@@ -78,7 +83,7 @@ def astar(grid, goal, start):
         if current != goal:
             neighbors = get_neighbors(current, grid)
             for neighbor in neighbors:
-                new_g = g_score[current] + 1 #how far did we already go
+                new_g = g_score[current] + cost.get(yeild_zones.get(neighbor), 1.0) #how far did we already go
                 h_score = heuristic(neighbor, goal) #how far do we have to go
                 f_score = new_g + h_score # cost of actually going there
                 if neighbor not in g_score or new_g < g_score[neighbor]: #did we see this before or if we have is it worth exploring for cost
@@ -88,9 +93,10 @@ def astar(grid, goal, start):
     return None
 
 if __name__ == "__main__":
-    path = astar(grid, goal, start)
+    path = astar(grid, goal, start, {})
     print(path)
-
+    print(get_neighbors(start, grid))
+    print(heuristic(start, goal))
 
 
 

@@ -1,12 +1,12 @@
 from astar import astar
-from farm import generate_farm
+from farm import generate_farm, yield_colours
 import pygame
 
 pygame.init()
 
-WINDOW_HEIGHT = int(input("What would you like the height to be: "))
-WINDOW_WIDTH = int(input("What would you like the width to be: "))
-cell_dimension = int(input("What size do you want the cells to be: "))
+WINDOW_HEIGHT = 800
+WINDOW_WIDTH = 800
+cell_dimension = 20
 white_colour = (200, 200, 200)
 start_colour = (0, 255, 0)
 destination = (255, 0, 0)
@@ -20,6 +20,9 @@ current_path = []
 
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Our window")
+rows = WINDOW_HEIGHT // cell_dimension
+cols = WINDOW_WIDTH // cell_dimension
+yeild_zones = generate_farm(rows, cols)
 
 
 def draw_grid(surface):
@@ -54,19 +57,27 @@ while program_run:
     window.fill((0, 0, 0))
     pygame.time.delay(60)
 
+    for (row, col), level in yeild_zones.items():
+        fill_cell(window, row, col, yield_colours[level])
+
     if start_cell: 
         row,col = start_cell
         fill_cell(window, row, col, start_colour)
+
     if goal_cell:
         row,col = goal_cell
         fill_cell(window, row, col, destination)
+
     for cell in obstacle_cells:
         row,col = cell
         fill_cell(window, row, col, obstacle_color)
+
     if current_path:
         for cell in current_path:
             row, col = cell
             fill_cell(window, row, col, pathway)
+    
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             program_run = False
@@ -90,13 +101,19 @@ while program_run:
                 if goal_cell == None:
                     goal_cell = clicked_cell(pygame.mouse.get_pos())
             elif event.key == pygame.K_SPACE:
-                rows = WINDOW_HEIGHT // cell_dimension
-                col = WINDOW_WIDTH // cell_dimension
-                grid = [[0 for _ in range(col)] for _ in range(rows)] #building the grid
-                for obstacles in obstacle_cells:
-                    grid[obstacles[0]][obstacles[1]] = 1
-                current_path = astar(grid, goal_cell, start_cell)
-                print(current_path)
+                if goal_cell and start_cell: 
+                    rows = WINDOW_HEIGHT // cell_dimension
+                    cols = WINDOW_WIDTH // cell_dimension
+                    grid = [[0 for _ in range(cols)] for _ in range(rows)] #building the grid
+                    for obstacles in obstacle_cells:
+                        grid[obstacles[0]][obstacles[1]] = 1
+                    current_path = astar(grid, goal_cell, start_cell, yeild_zones)
+                    print(current_path)
+            elif event.key == pygame.K_r:
+                yeild_zones = generate_farm(rows, cols)
+                current_path = []
+                start_cell = None
+                goal_cell = None
     draw_grid(window)
     pygame.display.flip()
 
