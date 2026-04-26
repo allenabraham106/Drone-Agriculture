@@ -33,7 +33,7 @@ def draw_grid(surface):
     for x in range(0, GRID_WIDTH, cell_dimension):
         pygame.draw.line(surface, white_colour, (x, 0), (x, WINDOW_HEIGHT))
     for y in range(0, WINDOW_HEIGHT, cell_dimension):
-        pygame.draw.line(surface, white_colour, (0, y), (WINDOW_WIDTH, y))
+        pygame.draw.line(surface, white_colour, (0, y), (GRID_WIDTH, y))
 
 
 def clicked_cell(cell_posn):
@@ -54,8 +54,39 @@ def add_obstacle(cell):
     if cell != start_cell and cell != goal_cell:
         obstacle_cells.add(cell)
 
-def draw_panel(surface):
-    
+def draw_panel(surface, path_length, current_zone):
+    pygame.draw.rect(surface, (30, 30, 30), (GRID_WIDTH, 0, 200, WINDOW_HEIGHT))
+    font = pygame.font.SysFont("Ariel", 16)
+    title = font.render("Ag-Drone", True, (255,255,255))
+    surface.blit(title, (GRID_WIDTH + 10, 20))
+
+    pygame.draw.rect(surface, (0, 200, 0), (GRID_WIDTH + 10, 80, 15, 15))
+    surface.blit(font.render("High Yield", True, (255, 255, 255)), (GRID_WIDTH + 30, 80))
+
+    pygame.draw.rect(surface, (255, 165, 0), (GRID_WIDTH + 10, 100, 15, 15))
+    surface.blit(font.render("Medium Yield", True, (255, 255, 255)), (GRID_WIDTH + 30, 100))
+
+    pygame.draw.rect(surface, (255, 255, 0), (GRID_WIDTH + 10, 120, 15, 15))
+    surface.blit(font.render("Low Yield", True, (255, 255, 255)), (GRID_WIDTH + 30, 120))
+
+    surface.blit(font.render(f"Path length: {path_length}", True, (255, 255, 255)), (GRID_WIDTH + 10, 160))
+    surface.blit(font.render(f"Zone: {current_zone}", True, (255, 255, 255)), (GRID_WIDTH + 10, 200))
+
+    surface.blit(
+        font.render("Controls:", True, (200, 200, 200)), (GRID_WIDTH + 10, 280)
+    )
+    surface.blit(
+        font.render("L-Click: Set Start", True, (200, 200, 200)), (GRID_WIDTH + 10, 300)
+    )
+    surface.blit(font.render("G: Set Goal", True, (200, 200, 200)), (GRID_WIDTH + 10, 320))
+    surface.blit(
+        font.render("R-Click: Obstacle", True, (200, 200, 200)), (GRID_WIDTH + 10, 340)
+    )
+    surface.blit(
+        font.render("Space: Run Drone", True, (200, 200, 200)), (GRID_WIDTH + 10, 360)
+    )
+    surface.blit(font.render("R: New Farm", True, (200, 200, 200)), (GRID_WIDTH + 10, 380))
+
 
 program_run = True
 
@@ -113,7 +144,7 @@ while program_run:
             elif event.key == pygame.K_SPACE:
                 if goal_cell and start_cell: 
                     rows = WINDOW_HEIGHT // cell_dimension
-                    cols = WINDOW_WIDTH // cell_dimension
+                    cols = GRID_WIDTH // cell_dimension
                     grid = [[0 for _ in range(cols)] for _ in range(rows)] #building the grid
                     for obstacles in obstacle_cells:
                         grid[obstacles[0]][obstacles[1]] = 1
@@ -126,7 +157,14 @@ while program_run:
                 current_path = []
                 start_cell = None
                 goal_cell = None
+    
+    if drone and drone.active and drone.index < len(current_path):
+        current_zone = yeild_zones.get(current_path[drone.index], "-")
+    else:
+        current_zone = "-"
+    
     draw_grid(window)
+    draw_panel(window, len(current_path), current_zone)
     pygame.display.flip()
 
 
