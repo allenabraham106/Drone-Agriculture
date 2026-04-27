@@ -2,7 +2,7 @@
 
 > A* pathfinding meets precision agriculture, optimizing drone harvest routes through procedurally generated crop fields.
 
-![Demo Screenshot](screenshot.png)
+![Demo Screenshot](ScreenShot.png)
 
 ## Overview
 
