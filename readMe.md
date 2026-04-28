@@ -2,7 +2,7 @@
 
 > A computer vision perception pipeline meets precision agriculture, processing real aerial drone imagery to generate optimal harvest routes using A* pathfinding.
 
-![Demo Screenshot](Screenshot.png)
+![Demo Screenshot](ScreenShot.png)
 
 ## Overview
 
@@ -12,7 +12,7 @@ The project is highly adaptable. The same pipeline could be applied to wildfire 
 
 | Original Field Image | Perception Output |
 |---------------------|-------------------|
-| ![Field](Field.jpg) | ![Perception](Perception_Results.png) |
+| ![Field](Feild.jpg) | ![Perception](Preception_Results.png) |
 
 
 ## Inspiration
