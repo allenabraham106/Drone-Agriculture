@@ -1,6 +1,7 @@
 from astar import astar
 from farm import generate_farm, yield_colours
 from drone import Drone
+from preception import parser
 import pygame
 
 pygame.init()
@@ -25,7 +26,7 @@ window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Our window")
 rows = WINDOW_HEIGHT // cell_dimension
 cols = WINDOW_WIDTH // cell_dimension
-yeild_zones = generate_farm(rows, cols)
+yeild_zones = parser("Feild.jpg")
 drone = None
 
 
