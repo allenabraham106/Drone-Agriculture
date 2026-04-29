@@ -9,7 +9,7 @@ grid = [
     [1, 1, 0, 0, 0],
 ]
 
-# print the whole grind
+# print the whole grid
 for row in grid:
     print(row)
 
@@ -48,9 +48,9 @@ def heuristic(current, goal):
     return abs(current[0] - goal[0]) + abs(current[1] - goal[1])
 
 
-#its been a minute since wokring. 
+#its been a minute since working. 
 # Adding temporary comments to understand
-def astar(grid, goal, start, yeild_zones):
+def astar(grid, goal, start, yield_zones):
     come_from = {
         #how did we get everywhere 
     }
@@ -68,10 +68,10 @@ def astar(grid, goal, start, yeild_zones):
         "low":2
     }
 
-    # so it basically find the lowest f score fromt he list of places we know exists, 
-    # if they are the goal then there we go, but if it is the goal but nto the start, 
+    # so it basically finds the lowest f score from the list of places we know exists, 
+    # if they are the goal then there we go, but if it is the goal but not the start, 
     # we go through all of come-from and append it to our path. 
-    # If we still haven't found our goal, we search neighbors and calculte the f_score and iterate using that
+    # If we still haven't found our goal, we search neighbors and calculate the f_score and iterate using that
     while open_list: 
         f_score, current = heapq.heappop(open_list) #takes the lowest f_score and makes it the current
         if current == goal:
@@ -84,7 +84,7 @@ def astar(grid, goal, start, yeild_zones):
         if current != goal:
             neighbors = get_neighbors(current, grid)
             for neighbor in neighbors:
-                new_g = g_score[current] + cost.get(yeild_zones.get(neighbor), 1.0) #how far did we already go
+                new_g = g_score[current] + cost.get(yield_zones.get(neighbor), 1.0) #how far did we already go
                 h_score = heuristic(neighbor, goal) #how far do we have to go
                 f_score = new_g + h_score # cost of actually going there
                 if neighbor not in g_score or new_g < g_score[neighbor]: #did we see this before or if we have is it worth exploring for cost

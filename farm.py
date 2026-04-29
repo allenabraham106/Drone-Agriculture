@@ -7,7 +7,7 @@ yield_colours = {
 }
 
 def generate_farm(rows, cols):
-    yeild_zone = {
+    yield_zone = {
 
     }
     num_seeds = random.randint(3, 7)
@@ -16,9 +16,9 @@ def generate_farm(rows, cols):
         for col in range(cols):
             min_dist = min(abs(row - s[0]) + abs(col - s[1]) for s in seeds) + random.uniform(-3, 3)
             if min_dist < 5: 
-                yeild_zone[(row, col)] = "high"
+                yield_zone[(row, col)] = "high"
             elif min_dist < 10:
-                yeild_zone[(row, col)] = "medium"
+                yield_zone[(row, col)] = "medium"
             else: 
-                yeild_zone[(row, col)] = "low"
-    return yeild_zone
+                yield_zone[(row, col)] = "low"
+    return yield_zone

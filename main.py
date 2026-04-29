@@ -1,7 +1,8 @@
 from astar import astar
 from farm import generate_farm, yield_colours
 from drone import Drone
-from preception import parser
+from perception import parser
+from perception_dataset import load_from_dataset
 import pygame
 
 pygame.init()
@@ -26,7 +27,9 @@ window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Our window")
 rows = WINDOW_HEIGHT // cell_dimension
 cols = WINDOW_WIDTH // cell_dimension
-yeild_zones = parser("Feild.jpg")
+yield_zones = load_from_dataset(
+    "data2017_miniscale", "18Z3272TU_1546-2504-2058-3016.jpg"
+)
 drone = None
 
 
@@ -154,7 +157,7 @@ while program_run:
     window.fill((0, 0, 0))
     pygame.time.delay(60)
 
-    for (row, col), level in yeild_zones.items():
+    for (row, col), level in yield_zones.items():
         fill_cell(window, row, col, yield_colours[level])
 
     if start_cell: 
@@ -177,7 +180,7 @@ while program_run:
     if drone:
         drone.update()
         drone.draw(window, cell_dimension)
-        score = drone.yeild_score
+        score = drone.yield_score
     else:
         score = 0
     
@@ -211,30 +214,30 @@ while program_run:
                     grid = [[0 for _ in range(cols)] for _ in range(rows)] #building the grid
                     for obstacles in obstacle_cells:
                         grid[obstacles[0]][obstacles[1]] = 1
-                    current_path = astar(grid, goal_cell, start_cell, yeild_zones)
-                    drone = Drone(current_path, cell_dimension, yeild_zones)
+                    current_path = astar(grid, goal_cell, start_cell, yield_zones)
+                    drone = Drone(current_path, cell_dimension, yield_zones)
                     drone.start()
                     print(current_path)
             elif event.key == pygame.K_r:
-                yeild_zones = generate_farm(rows, cols)
+                yield_zones = generate_farm(rows, cols)
                 current_path = []
                 start_cell = None
                 goal_cell = None
     
     if drone and len(current_path) > 0:
-        max_score = len(current_path) * 3 # for the high-yeild value
-        efficieny = (drone.yeild_score/max_score) * 100
+        max_score = len(current_path) * 3 # for the high-yield value
+        efficiency = (drone.yield_score/max_score) * 100
     else: 
         max_score = 0
-        efficieny = 0
+        efficiency = 0
     if drone and drone.index < len(current_path):
-        current_zone = yeild_zones.get(current_path[drone.index], "-")
+        current_zone = yield_zones.get(current_path[drone.index], "-")
     else:
         current_zone = "-"
     
     
     #draw_grid(window)
-    draw_panel(window, len(current_path), current_zone, score, efficieny, score)
+    draw_panel(window, len(current_path), current_zone, score, efficiency, score)
     pygame.display.flip()
 
 

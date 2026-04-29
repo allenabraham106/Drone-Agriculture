@@ -12,7 +12,7 @@ The project is highly adaptable. The same pipeline could be applied to wildfire 
 
 | Original Field Image | Perception Output |
 |---------------------|-------------------|
-| ![Field](Feild.jpg) | ![Perception](Preception_Results.png) |
+| ![Field](Field.jpg) | ![Perception](Perception_Results.png) |
 
 
 ## Inspiration
@@ -30,7 +30,7 @@ The simulation runs in three layers.
 A computer vision pipeline processes a real aerial crop image using OpenCV. The image is resized to match the simulation grid, split into RGB channels, and analyzed cell by cell using the Excess Green Index, a real vegetation health metric used in precision agriculture:
 
 ```
-Excess Green = Average Green Channel  Average Red Channel
+Excess Green = Average Green Channel − Average Red Channel
 ```
 
 Each grid cell is classified based on its vegetation health:

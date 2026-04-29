@@ -24,5 +24,5 @@ def parser(image_path):
 
 
 if __name__ == "__main__":
-    zones = parser("Feild.jpg")
+    zones = parser("Field.jpg")
     print(zones)
