@@ -5,11 +5,11 @@ Copy
  
 > A computer vision perception pipeline meets precision agriculture, processing real expert labeled aerial imagery to generate optimal harvest routes using A* pathfinding.
  
-![Demo Screenshot](screenshot.png)
+![Demo Screenshot](ScreenShot.png)
  
 | Real Aerial Field Image | Perception Output |
 |------------------------|-------------------|
-| ![Field](Feild.jpg) | ![Perception](Perception_Results.png) |
+| ![Field](Feild.jpg) | ![Perception](Preception_Results.png) |
  
 ## Overview
  
