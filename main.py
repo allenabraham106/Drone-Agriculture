@@ -4,6 +4,7 @@ from drone import Drone
 from perception import parser
 from perception_dataset import load_from_dataset
 import pygame
+import os
 
 pygame.init()
 
@@ -27,10 +28,16 @@ window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Our window")
 rows = WINDOW_HEIGHT // cell_dimension
 cols = WINDOW_WIDTH // cell_dimension
-yield_zones = load_from_dataset(
-    "data2017_miniscale", "18Z3272TU_1546-2504-2058-3016.jpg"
-)
 drone = None
+image_list = os.listdir("data2017_miniscale/field_images/rgb")
+image_list.sort()
+image_index = 0
+current_image = image_list[image_index]
+yield_zones = load_from_dataset(
+    "data2017_miniscale",
+    current_image
+)
+
 
 
 
@@ -149,6 +156,16 @@ def draw_panel(surface, path_length, current_zone, yield_score, efficiency, scor
     surface.blit(
         font.render("R: New Farm", True, (200, 200, 200)), (GRID_WIDTH + 10, 405)
     )
+    surface.blit(
+        font.render("N: Next Image", True, (200, 200, 200)), (GRID_WIDTH + 10, 425)
+    )
+    surface.blit(
+        font.render("P: Prev Image", True, (200, 200, 200)), (GRID_WIDTH + 10, 445)
+    )
+    surface.blit(
+        font.render(f"Image: {current_image[:12]}...", True, (150, 150, 150)),
+        (GRID_WIDTH + 10, 460),
+    )
 
 
 program_run = True
@@ -223,7 +240,24 @@ while program_run:
                 current_path = []
                 start_cell = None
                 goal_cell = None
-    
+            elif event.key == pygame.K_n:
+                image_index = (image_index + 1) % len(image_list)
+                current_image = image_list[image_index]
+                yield_zones = load_from_dataset(
+                    "data2017_miniscale", 
+                    current_image
+                )
+                current_path = []
+                drone = None
+            elif event.key == pygame.K_p:
+                image_index = (image_index - 1) % len(image_list)
+                current_image = image_list[image_index]
+                yield_zones = load_from_dataset(
+                    "data2017_miniscale",
+                    current_image
+                )
+                current_path = []
+                drone = None    
     if drone and len(current_path) > 0:
         max_score = len(current_path) * 3 # for the high-yield value
         efficiency = (drone.yield_score/max_score) * 100

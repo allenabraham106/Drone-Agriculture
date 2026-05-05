@@ -125,6 +125,8 @@ yield_zones = load_from_dataset("data2017_miniscale", "YOUR_IMAGE_NAME.jpg")
 | Right Click | Place obstacle |
 | Space | Run A* and animate drone |
 | R | Generate procedural farm layout |
+| N | Generate next image in the Agricultural Vision Dataset |
+| P | Generate previous image in the Agricultural Vision Dataset |
  
 ## Project Structure
  
