@@ -3,6 +3,7 @@ import segmentation_models_pytorch as smp
 import cv2
 import numpy as np
 import os
+from torch.utils.data import Dataloader
 
 # unet is industry standard for segmentation
 model = smp.Unet(
@@ -19,7 +20,7 @@ class CropDataset:
     def __len__(self):
         return len(self.images)
     def __getitem__(self, index):
-        image_name = self.image[index]
+        image_name = self.images[index]
         image_path = os.path.join(self.dataset_path, "field_images/rgb", image_name)
         image = cv2.imread(image_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -42,5 +43,14 @@ class CropDataset:
                 anomoly_mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
                 mask[anomoly_mask == 255] = class_id  #creates a true or false grid, true if anomoly exists
 
+        #reorders the grid and converst to a tensor
         image = torch.tensor(image).permute(2, 0, 1).float() / 255.0
         mask = torch.tensor(mask).long()
+
+        return image, mask
+
+
+dataset = CropDataset("data2017_miniscale")
+dataloader = Dataloader(dataset, batch_size = 4, suffle = True)
+loss_function = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr = 0.001) # this adds weights based on our loss function. 0.001 is a default but safe
