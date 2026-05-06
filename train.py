@@ -3,7 +3,7 @@ import segmentation_models_pytorch as smp
 import cv2
 import numpy as np
 import os
-from torch.utils.data import Dataloader
+from torch.utils.data import DataLoader, Dataset
 
 # unet is industry standard for segmentation
 model = smp.Unet(
@@ -12,7 +12,7 @@ model = smp.Unet(
     classes=3 # 3 classes - High, Medium, Low yields
 )
 
-class CropDataset:
+class CropDataset(Dataset):
     def __init__(self, dataset_path):
         self.dataset_path = dataset_path
         self.images = os.listdir(os.path.join(dataset_path, "field_images/rgb"))
@@ -51,6 +51,22 @@ class CropDataset:
 
 
 dataset = CropDataset("data2017_miniscale")
-dataloader = Dataloader(dataset, batch_size = 4, suffle = True)
+dataset.images = dataset.images[:200] #only first 200
+dataloader = DataLoader(dataset, batch_size = 4, shuffle = True)
+device = torch.device("mps")  # M4 GPU
+model = model.to(device)
 loss_function = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr = 0.001) # this adds weights based on our loss function. 0.001 is a default but safe
+
+for epoch in range(10):
+    for images, masks in dataloader:
+        images = images.to(device)
+        masks = masks.to(device)
+        prediction = model(images) # runs the model on a batch of 4 images
+        loss = loss_function(prediction, masks) # compares the loss (how wrong we are)
+        loss.backward() 
+        optimizer.step() #shifts the weights to minimize the loss
+        optimizer.zero_grad() #resets the optimizer so the next batch is fresh
+    print(f"Epoch: {epoch} loss: {loss}") #reports
+
+torch.save(model.state_dict(), "crop_model.pt")
