@@ -10,7 +10,7 @@ def load_from_model(image_path, rows = 40, cols = 40):
     model.eval()
 
     # load a new image
-    image = cv2.imread("Feild.jpg")
+    image = cv2.imread(image_path)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image = cv2.resize(image, (512, 512))
 
