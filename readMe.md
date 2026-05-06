@@ -9,7 +9,7 @@ Copy
  
 | Real Aerial Field Image | Perception Output |
 |------------------------|-------------------|
-| ![Field](Feild.jpg) | ![Perception](Preception_Results.png) |
+| ![Field](Feild.jpg) | ![Perception](ML_Train.png) |
  
 ## Overview
  

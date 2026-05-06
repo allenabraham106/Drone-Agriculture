@@ -3,6 +3,7 @@ from farm import generate_farm, yield_colours
 from drone import Drone
 from perception import parser
 from perception_dataset import load_from_dataset
+from preception_load import load_from_model
 import pygame
 import os
 
@@ -33,10 +34,7 @@ image_list = os.listdir("data2017_miniscale/field_images/rgb")
 image_list.sort()
 image_index = 0
 current_image = image_list[image_index]
-yield_zones = load_from_dataset(
-    "data2017_miniscale",
-    current_image
-)
+yield_zones = load_from_model("Field.jpg")
 
 
 
