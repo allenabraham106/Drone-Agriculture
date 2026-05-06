@@ -51,11 +51,12 @@ class CropDataset(Dataset):
 
 
 dataset = CropDataset("data2017_miniscale")
-dataset.images = dataset.images[:200] #only first 200
+dataset.images = dataset.images[:2000] #only first 200
 dataloader = DataLoader(dataset, batch_size = 4, shuffle = True)
 device = torch.device("mps")  # M4 GPU
 model = model.to(device)
-loss_function = torch.nn.CrossEntropyLoss()
+weights = torch.tensor([0.1, 2.0, 2.0]).to(device)
+loss_function = torch.nn.CrossEntropyLoss(weight=weights)
 optimizer = torch.optim.Adam(model.parameters(), lr = 0.001) # this adds weights based on our loss function. 0.001 is a default but safe
 
 for epoch in range(10):
