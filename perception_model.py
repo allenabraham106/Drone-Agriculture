@@ -3,11 +3,7 @@ import segmentation_models_pytorch as smp
 import cv2
 import numpy as np
 
-def load_from_model(image_path, rows = 40, cols = 40):
-    # load model
-    model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=3)
-    model.load_state_dict(torch.load("crop_model.pt", map_location="cpu"))
-    model.eval()
+def load_from_model(model, image_path, rows = 40, cols = 40):
 
     # load a new image
     image = cv2.imread(image_path)

@@ -4,4 +4,5 @@ __pycache__/
 .DS_Store
 *.pt
 data2017_miniscale/
-data2017_miniscale.tar.gz
+data2017_miniscale.tar.gz.claude/
+.claude/

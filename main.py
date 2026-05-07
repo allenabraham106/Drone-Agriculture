@@ -4,6 +4,8 @@ from drone import Drone
 from perception import parser
 from perception_dataset import load_from_dataset
 from perception_model import load_from_model
+import segmentation_models_pytorch as smp
+import torch
 import pygame
 import os
 
@@ -34,7 +36,11 @@ image_list = os.listdir("data2017_miniscale/field_images/rgb")
 image_list.sort()
 image_index = 0
 current_image = image_list[image_index]
-yield_zones = load_from_model("Feild.jpg")
+ml_model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=3)
+ml_model.load_state_dict(torch.load("crop_model.pt", map_location="cpu"))
+ml_model.eval()
+yield_zones = load_from_model(ml_model, "Feild.jpg")
+
 
 
 
