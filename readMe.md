@@ -2,7 +2,9 @@
 
 > A full ML perception pipeline meets precision agriculture, training a UNet segmentation model on real CVPR research data to generate optimal drone harvest routes using A* pathfinding.
 
-[![Demo Video](https://img.youtube.com/vi/DqFOie--OIg/0.jpg)](https://www.youtube.com/watch?v=DqFOie--OIg)
+[![Demo Video](https://img.youtube.com/vi/DqFOie--OIg/maxresdefault.jpg)](https://www.youtube.com/watch?v=DqFOie--OIg)
+
+> ▶️ Click the image above to watch the full demo
 
 | Real Aerial Field Image | ML Model Prediction |
 |------------------------|---------------------|
