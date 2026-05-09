@@ -172,7 +172,7 @@ ag-drone/
 
 Albumentations data augmentation to reduce overfitting and improve generalization
 
-ROS integration to publish computed paths as ROS topics for deployment on real autonomous drone hardware once ROS foundations are established
+ROS integration to publish computed paths as ROS topics for deployment on real autonomous drone hardware
 
 3D terrain mapping to visualize elevation and crop height data
 
