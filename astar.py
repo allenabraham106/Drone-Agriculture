@@ -1,25 +1,4 @@
 import heapq
-# 1 = Wall
-# 0 = Open space
-grid = [
-    [1, 1, 0, 0, 0],
-    [0, 0, 0, 1, 1],
-    [1, 1, 0, 1, 1],
-    [0, 0, 0, 0, 0],
-    [1, 1, 0, 0, 0],
-]
-
-# print the whole grid
-for row in grid:
-    print(row)
-
-start = (0, 3)
-goal = (4, 4)
-
-# based on values set above
-print(f"Start: {start}")
-print(f"Goal: {goal}")
-
 
 # where can I move
 def get_neighbors(pos, grid):
@@ -37,7 +16,6 @@ def get_neighbors(pos, grid):
         new_row = row + row_change
         new_col = col + col_change
         if 0 <= new_row < len(grid) and 0 <= new_col < len(grid[0]):
-            print(new_row, new_col, grid[new_row][new_col])
             if grid[new_row][new_col] == 0:
                 neighbors.append((new_row, new_col))
     return neighbors
@@ -92,15 +70,14 @@ def astar(grid, goal, start, yield_zones):
     return None
 
 if __name__ == "__main__":
-    grid = [...]
+    grid = [
+        [1, 1, 0, 0, 0],
+        [0, 0, 0, 1, 1],
+        [1, 1, 0, 1, 1],
+        [0, 0, 0, 0, 0],
+        [1, 1, 0, 0, 0],
+    ]
     start = (0, 3)
     goal = (4, 4)
-    path = astar(grid, goal, start, {})
-    print(path)
-    print(get_neighbors(start, grid))
-    print(heuristic(start, goal))
+    print(astar(grid, goal, start, {}))
 
-
-
-print(get_neighbors(start, grid))
-print(heuristic(start, goal))
