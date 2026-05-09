@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import os
 from torch.utils.data import DataLoader, Dataset
+import matplotlib.pyplot as plt
 
 # unet is industry standard for segmentation
 model = smp.Unet(
@@ -61,7 +62,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr = 0.001) # this adds weights
 
 all_images = os.listdir("data2017_miniscale/field_images/rgb")
 all_images.sort()
-all_images = all_images[:2000]
+all_images = all_images[:8345]
 
 split = int(0.8 * len(all_images))
 train_images = all_images[:split]
@@ -80,8 +81,9 @@ train_losses = []
 val_losses = []
 
 
-for epoch in range(20):
+for epoch in range(10):
     model.train()
+    epoch_train_loss = 0
     for images, masks in train_loader:
         images = images.to(device)
         masks = masks.to(device)
@@ -90,18 +92,30 @@ for epoch in range(20):
         loss.backward() 
         optimizer.step() #shifts the weights to minimize the loss
         optimizer.zero_grad() #resets the optimizer so the next batch is fresh
-    train_losses.append(loss.item())
+        epoch_train_loss += loss.item()
+    train_losses.append(epoch_train_loss / len(train_loader))
 
     model.eval()
+    epoch_val_loss = 0
     with torch.no_grad():
         for image, masks in val_loader:
             image = image.to(device)
             masks = masks.to(device)
             val_prediction = model(image)
             val_loss = loss_function(val_prediction, masks)
-    val_losses.append(val_loss.item())
-    print(f"Epoch {epoch} train: {loss:.4f} val: {val_loss:.4f}")
-
+            epoch_val_loss += val_loss.item()
+    val_losses.append(epoch_val_loss / len(val_loader))
+    print(f"Epoch {epoch} train: {train_losses[-1]:.4f} val: {val_losses[-1]:.4f}")
 
 
 torch.save(model.state_dict(), "crop_model.pt")
+
+plt.figure(figsize=(10, 5))
+plt.plot(train_losses, label = "Train Loss")
+plt.plot(val_losses, label = "Val Loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Training and Validation Loss")
+plt.legend()
+plt.savefig("loss_curve.png")
+print("loss curve saved")
