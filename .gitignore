@@ -5,5 +5,7 @@ __pycache__/
 *.pt
 data2017_miniscale/
 data2017_miniscale.tar.gz.claude/
-.claude/
 data2017_miniscale.tar.gz
+crop_model.pt
+.claude/
+

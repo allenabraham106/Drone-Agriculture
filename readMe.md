@@ -1,12 +1,12 @@
 # 🚁 Ag-Drone Agricultural Path Planner
 
-> A full ML perception pipeline meets precision agriculture, training a neural network on real CVPR research data to generate optimal drone harvest routes using A* pathfinding.
+> A full ML perception pipeline meets precision agriculture, training a UNet segmentation model on real CVPR research data to generate optimal drone harvest routes using A* pathfinding.
 
-![Demo Screenshot](ScreenShot.png)
+![Demo](ScreenShot.png)
 
-| Real Aerial Field Image | ML Model Output |
-|------------------------|-----------------|
-| ![Field](Feild.jpg) | ![ML Output](ML_Train.png) |
+| ML Model Prediction | A* Drone Route |
+|--------------------|----------------|
+| ![ML Output](ML_Train.png) | ![Loss Curve](loss_curve.png) |
 
 ## Overview
 
@@ -26,17 +26,17 @@ The simulation runs in three layers.
 
 **1. ML Perception Pipeline (perception_model.py)**
 
-A UNet segmentation model trained on the Agriculture Vision CVPR dataset predicts yield zones directly from any aerial RGB image. No mask files required — the model has learned what healthy and stressed crops look like from 2000 real labeled farm images.
+A UNet segmentation model trained on the Agriculture Vision CVPR dataset predicts yield zones directly from any aerial RGB image. No mask files required — the model learned what healthy and stressed crops look like from 8345 real labeled farm images.
 
 The model outputs a pixel level classification for every cell:
 
 🟢 High Yield — healthy crops with no detected anomaly
 
-🟠 Medium Yield — double plant or mild stress detected
+🟠 Medium Yield — double plant detected
 
-🟡 Low Yield — weed cluster, nutrient deficiency, planter skip, or storm damage detected
+🟡 Low Yield — weed cluster, nutrient deficiency, planter skip, storm damage, or waterway detected
 
-For reference, the dataset pipeline (perception_dataset.py) is also included for reading directly from Agriculture Vision mask files, and the RGB excess green index pipeline (perception.py) works on any unlabeled aerial image without the dataset.
+Two additional pipelines are included for reference. `perception_dataset.py` reads directly from Agriculture Vision mask files. `perception.py` uses RGB excess green index analysis for unlabeled imagery without the dataset.
 
 **2. Pathfinding (astar.py)**
 
@@ -84,7 +84,13 @@ tar -xzf data2017_miniscale.tar.gz
 python train.py
 ```
 
-This trains a UNet with ResNet34 encoder on 2000 labeled aerial farm images using weighted CrossEntropy loss to handle class imbalance between healthy and anomaly zones. Training takes roughly 3 to 8 hours on Apple M4 GPU. The model is saved as `crop_model.pt`.
+Training uses a UNet with ResNet34 encoder, ImageNet normalization, weighted CrossEntropy loss to handle class imbalance, and an 80/20 train/val split across 8345 labeled images. Training takes roughly 8 to 15 hours on Apple M4 GPU. The model is saved as `crop_model.pt`.
+
+## Model Performance
+
+Training on the full 8345 image Agriculture Vision dataset over 10 epochs showed consistent improvement in average train loss from 0.695 to 0.625. Validation loss stabilized around 0.75 indicating the model generalizes to unseen aerial farm imagery without significant overfitting. The gap between train and val loss indicates mild overfitting that would be reduced with augmentation or additional training data.
+
+![Loss Curve](loss_curve.png)
 
 ## Features
 
@@ -102,14 +108,14 @@ This trains a UNet with ResNet34 encoder on 2000 labeled aerial farm images usin
 
 🚧 **Obstacle placement** simulate trees, buildings, or no fly zones
 
-🔄 **Image cycling** press N and P to cycle through dataset images live
+🔄 **Image cycling** press N and P to cycle through all 8345 dataset images live
 
 ## How To Run
 
 **Requirements:**
 
 ```bash
-pip install pygame opencv-python numpy torch segmentation-models-pytorch
+pip install pygame opencv-python numpy torch segmentation-models-pytorch matplotlib
 ```
 
 **Train the model first** using the instructions above, then:
@@ -143,7 +149,7 @@ ag-drone/
     farm.py                  Procedural farm generation for testing
     drone.py                 Drone class, animation, scoring, and path tracking
     inference.py             Quick model inference test script
-    drone.png                Drone sprite
+    Drone.png                Drone sprite
     Feild.jpg                Sample aerial crop image
     README.md
 ```
@@ -164,17 +170,17 @@ ag-drone/
 
 ## Future Work
 
-ROS integration to publish computed paths as ROS topics for deployment on real autonomous drone hardware
+Albumentations data augmentation to reduce overfitting and improve generalization
+
+ROS integration to publish computed paths as ROS topics for deployment on real autonomous drone hardware once ROS foundations are established
 
 3D terrain mapping to visualize elevation and crop height data
 
 Multi drone coordination for covering different zones simultaneously
 
-Fine tune on full Agriculture Vision dataset with all 8345 images for improved model accuracy
-
 ## Built With
 
-Python, Pygame, OpenCV, NumPy, PyTorch, segmentation-models-pytorch, and the A* Search Algorithm
+Python, Pygame, OpenCV, NumPy, PyTorch, segmentation-models-pytorch, Matplotlib, and the A* Search Algorithm
 
 Dataset: [Agriculture Vision CVPR Dataset](https://www.agriculture-vision.com/)
 
