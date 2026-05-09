@@ -4,9 +4,9 @@
 
 ![Demo](ScreenShot.png)
 
-| ML Model Prediction | A* Drone Route |
-|--------------------|----------------|
-| ![ML Output](ML_Train.png) | ![Loss Curve](loss_curve.png) |
+| Real Aerial Field Image | ML Model Prediction |
+|------------------------|---------------------|
+| ![Field](Feild.jpg) | ![ML Output](ML_Train.png) |
 
 ## Overview
 
