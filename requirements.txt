@@ -1,0 +1,7 @@
+pygame
+opencv-python
+numpy
+torch
+segmentation-models-pytorch
+matplotlib
+awscli

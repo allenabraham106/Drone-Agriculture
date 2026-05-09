@@ -48,8 +48,6 @@ def heuristic(current, goal):
     return abs(current[0] - goal[0]) + abs(current[1] - goal[1])
 
 
-#its been a minute since working. 
-# Adding temporary comments to understand
 def astar(grid, goal, start, yield_zones):
     come_from = {
         #how did we get everywhere 
@@ -94,6 +92,9 @@ def astar(grid, goal, start, yield_zones):
     return None
 
 if __name__ == "__main__":
+    grid = [...]
+    start = (0, 3)
+    goal = (4, 4)
     path = astar(grid, goal, start, {})
     print(path)
     print(get_neighbors(start, grid))

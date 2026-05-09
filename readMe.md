@@ -8,7 +8,7 @@
 
 | Real Aerial Field Image | ML Model Prediction |
 |------------------------|---------------------|
-| ![Field](Feild.jpg) | ![ML Output](ML_Train.png) |
+| ![Field](Field.jpg) | ![ML Output](ML_Train.png) |
 
 ## Overview
 
