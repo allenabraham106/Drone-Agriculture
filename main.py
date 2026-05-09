@@ -43,9 +43,6 @@ yield_zones = load_from_model(ml_model, "Feild.jpg")
 
 
 
-
-
-
 def draw_grid(surface):
     for x in range(0, GRID_WIDTH, cell_dimension):
         pygame.draw.line(surface, white_colour, (x, 0), (x, WINDOW_HEIGHT))

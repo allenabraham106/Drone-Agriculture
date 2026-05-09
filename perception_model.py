@@ -12,6 +12,9 @@ def load_from_model(model, image_path, rows = 40, cols = 40):
 
     # convert to tensor
     tensor = torch.tensor(image).permute(2, 0, 1).float() / 255.0
+    mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
+    std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
+    tensor = (tensor - mean) / std
     tensor = tensor.unsqueeze(0)  # add batch dimension
 
     with torch.no_grad():

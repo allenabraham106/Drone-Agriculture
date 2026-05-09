@@ -45,22 +45,44 @@ class CropDataset(Dataset):
 
         #reorders the grid and converst to a tensor
         image = torch.tensor(image).permute(2, 0, 1).float() / 255.0
+        mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
+        std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
+        image = (image - mean) / std
         mask = torch.tensor(mask).long()
 
         return image, mask
 
 
-dataset = CropDataset("data2017_miniscale")
-dataset.images = dataset.images[:2000] #only first 200
-dataloader = DataLoader(dataset, batch_size = 4, shuffle = True)
 device = torch.device("mps")  # M4 GPU
 model = model.to(device)
 weights = torch.tensor([0.1, 2.0, 2.0]).to(device)
 loss_function = torch.nn.CrossEntropyLoss(weight=weights)
 optimizer = torch.optim.Adam(model.parameters(), lr = 0.001) # this adds weights based on our loss function. 0.001 is a default but safe
 
-for epoch in range(10):
-    for images, masks in dataloader:
+all_images = os.listdir("data2017_miniscale/field_images/rgb")
+all_images.sort()
+all_images = all_images[:2000]
+
+split = int(0.8 * len(all_images))
+train_images = all_images[:split]
+val_images = all_images[split:]
+
+train_dataset = CropDataset("data2017_miniscale")
+train_dataset.images = train_images
+
+val_dataset = CropDataset("data2017_miniscale")
+val_dataset.images = val_images
+
+train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=4, shuffle=False)
+
+train_losses = []
+val_losses = []
+
+
+for epoch in range(20):
+    model.train()
+    for images, masks in train_loader:
         images = images.to(device)
         masks = masks.to(device)
         prediction = model(images) # runs the model on a batch of 4 images
@@ -68,6 +90,18 @@ for epoch in range(10):
         loss.backward() 
         optimizer.step() #shifts the weights to minimize the loss
         optimizer.zero_grad() #resets the optimizer so the next batch is fresh
-    print(f"Epoch: {epoch} loss: {loss}") #reports
+    train_losses.append(loss.item())
+
+    model.eval()
+    with torch.no_grad():
+        for image, masks in val_loader:
+            image = image.to(device)
+            masks = masks.to(device)
+            val_prediction = model(image)
+            val_loss = loss_function(val_prediction, masks)
+    val_losses.append(val_loss.item())
+    print(f"Epoch {epoch} train: {loss:.4f} val: {val_loss:.4f}")
+
+
 
 torch.save(model.state_dict(), "crop_model.pt")
