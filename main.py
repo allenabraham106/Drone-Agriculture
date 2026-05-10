@@ -39,7 +39,7 @@ current_image = image_list[image_index]
 ml_model = smp.Unet(encoder_name="resnet34", in_channels=3, classes=3)
 ml_model.load_state_dict(torch.load("crop_model.pt", map_location="cpu"))
 ml_model.eval()
-yield_zones = load_from_model(ml_model, "Feild.jpg")
+yield_zones = load_from_model(ml_model, "Field.jpg")
 
 
 
