@@ -4,11 +4,9 @@
 
 [![Demo Video](https://img.youtube.com/vi/DqFOie--OIg/maxresdefault.jpg)](https://www.youtube.com/watch?v=DqFOie--OIg)
 
-> ▶️ Click the image above to watch the full demo
-
 | Real Aerial Field Image | ML Model Prediction |
 |------------------------|---------------------|
-| ![Field](Field.jpg) | ![ML Output](ML_Train.png) |
+| ![Field](Feild.jpg) | ![ML Output](ML_Train.png) |
 
 ## Overview
 
@@ -28,7 +26,7 @@ The simulation runs in three layers.
 
 **1. ML Perception Pipeline (perception_model.py)**
 
-A UNet segmentation model trained on the Agriculture Vision CVPR dataset predicts yield zones directly from any aerial RGB image. No mask files required — the model learned what healthy and stressed crops look like from 8345 real labeled farm images.
+A UNet segmentation model trained on the Agriculture Vision CVPR dataset predicts yield zones directly from any aerial RGB image. No mask files required — the model learned what healthy and stressed crops look like from 8345 real labeled farm images with albumentations augmentation including horizontal and vertical flips, random 90 degree rotations, and brightness contrast adjustments.
 
 The model outputs a pixel level classification for every cell:
 
@@ -86,17 +84,28 @@ tar -xzf data2017_miniscale.tar.gz
 python train.py
 ```
 
-Training uses a UNet with ResNet34 encoder, ImageNet normalization, weighted CrossEntropy loss to handle class imbalance, and an 80/20 train/val split across 8345 labeled images. Training takes roughly 8 to 15 hours on Apple M4 GPU. The model is saved as `crop_model.pt`.
+Training uses a UNet with ResNet34 encoder, ImageNet normalization, albumentations augmentation, weighted CrossEntropy loss to handle class imbalance, and an 80/20 train/val split across 8345 labeled images. Training takes roughly 8 to 15 hours on Apple M4 GPU. The model is saved as `crop_model.pt`.
 
 ## Model Performance
 
-Training on the full 8345 image Agriculture Vision dataset over 10 epochs showed consistent improvement in average train loss from 0.695 to 0.625. Validation loss stabilized around 0.75 indicating the model generalizes to unseen aerial farm imagery without significant overfitting. The gap between train and val loss indicates mild overfitting that would be reduced with augmentation or additional training data.
+Training on the full 8345 image Agriculture Vision dataset over 10 epochs with albumentations augmentation showed consistent improvement in average train loss from 0.695 to 0.625. Validation loss stabilized around 0.75 indicating the model generalizes to unseen aerial farm imagery.
+
+Augmentation improved Mean IoU by 94% compared to the baseline model trained without augmentation.
+
+| Class | IoU |
+|-------|-----|
+| High Yield | 0.318 |
+| Medium Yield | 0.047 |
+| Low Yield | 0.184 |
+| **Mean IoU** | **0.183** |
+
+Medium yield IoU is lower due to double plant being the rarest and most visually subtle anomaly class in the dataset.
 
 ![Loss Curve](loss_curve.png)
 
 ## Features
 
-🧠 **Trained ML perception** UNet segmentation model predicts yield zones on any aerial image
+🧠 **Trained ML perception** UNet segmentation model with albumentations augmentation predicts yield zones on any aerial image
 
 🗺️ **Real dataset pipeline** reads expert labeled Agriculture Vision CVPR imagery directly
 
@@ -117,7 +126,7 @@ Training on the full 8345 image Agriculture Vision dataset over 10 epochs showed
 **Requirements:**
 
 ```bash
-pip install pygame opencv-python numpy torch segmentation-models-pytorch matplotlib
+pip install -r requirements.txt
 ```
 
 **Train the model first** using the instructions above, then:
@@ -145,12 +154,14 @@ ag-drone/
     main.py                  Pygame simulation, rendering, and event handling
     astar.py                 A* pathfinding algorithm with yield cost weights
     train.py                 UNet model training on Agriculture Vision dataset
+    evaluate.py              Mean IoU evaluation on validation set
     perception_model.py      ML model inference pipeline for any aerial image
     perception_dataset.py    Direct Agriculture Vision mask file pipeline
     perception.py            RGB excess green index pipeline for unlabeled imagery
     farm.py                  Procedural farm generation for testing
     drone.py                 Drone class, animation, scoring, and path tracking
     inference.py             Quick model inference test script
+    requirements.txt         Python dependencies
     Drone.png                Drone sprite
     Feild.jpg                Sample aerial crop image
     README.md
@@ -172,17 +183,17 @@ ag-drone/
 
 ## Future Work
 
-Albumentations data augmentation to reduce overfitting and improve generalization
-
 ROS integration to publish computed paths as ROS topics for deployment on real autonomous drone hardware
 
 3D terrain mapping to visualize elevation and crop height data
 
 Multi drone coordination for covering different zones simultaneously
 
+Fine tune on additional epochs with learning rate scheduling for improved IoU
+
 ## Built With
 
-Python, Pygame, OpenCV, NumPy, PyTorch, segmentation-models-pytorch, Matplotlib, and the A* Search Algorithm
+Python, Pygame, OpenCV, NumPy, PyTorch, segmentation-models-pytorch, Albumentations, Matplotlib, and the A* Search Algorithm
 
 Dataset: [Agriculture Vision CVPR Dataset](https://www.agriculture-vision.com/)
 

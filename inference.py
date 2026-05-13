@@ -9,7 +9,7 @@ model.load_state_dict(torch.load("crop_model.pt", map_location="cpu"))
 model.eval()
 
 # load a new image
-image = cv2.imread("Feild.jpg")
+image = cv2.imread("Field.jpg")
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 image = cv2.resize(image, (512, 512))
 
